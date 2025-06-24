@@ -1,27 +1,125 @@
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const notification = document.getElementById('notification');
-        
-        if (email && password) {
-            notification.textContent = "Login successful!";
-            notification.className = "mt-4 p-3 rounded-lg text-center bg-green-100 text-green-800";
-            notification.classList.remove('hidden');
-
-            // Save email in localStorage (optional – to show intern's name in dashboard)
-            localStorage.setItem('internEmail', email);
-
-            // Redirect after 1.5 seconds
-            setTimeout(() => {
-                window.location.href = "dashboard.html";
-            }, 1500);
-        } else {
-            notification.textContent = "Please enter both email and password";
-            notification.className = "mt-4 p-3 rounded-lg text-center bg-red-100 text-red-800";
-            notification.classList.remove('hidden');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intern Login Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
         }
-    });
-</script>
+        .login-card {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .login-btn {
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+        .decoration-circle {
+            position: absolute;
+            border-radius: 50%;
+            z-index: -1;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="flex items-center justify-center p-4">
+    <!-- Decorative elements -->
+    <div class="decoration-circle w-64 h-64 top-10 left-10 bg-purple-200 opacity-50"></div>
+    <div class="decoration-circle w-96 h-96 bottom-0 right-0 bg-indigo-200 opacity-40"></div>
+    
+    <div class="login-card w-full max-w-md rounded-2xl p-8 relative overflow-hidden">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">Intern Portal</h1>
+            <p class="text-gray-600 mt-1">Sign in to access your internship dashboard</p>
+        </div>
+        
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Email or Username</label>
+                <input type="text" id="username" name="username" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" placeholder="Enter your email or username" required>
+            </div>
+            
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800">Forgot password?</a>
+                </div>
+                <input type="password" id="password" name="password" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" placeholder="Enter your password" required>
+            </div>
+            
+            <div class="flex items-center">
+                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+            </div>
+            
+            <div>
+                <button type="submit" class="login-btn w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    Sign In
+                </button>
+            </div>
+        </form>
+        
+        <div class="mt-6 text-center text-sm">
+            <p class="text-gray-600">
+                New intern? 
+                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-800">Register here</a>
+            </p>
+        </div>
+        
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <div class="text-center text-sm text-gray-600">
+                <p>Need help? Contact your supervisor or</p>
+                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-800">intern.support@company.com</a>
+            </div>
+        </div>
+        
+        <!-- Login success modal -->
+        <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            <div class="bg-white rounded-lg p-8 max-w-sm mx-4 z-10">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Welcome back!</h3>
+                    <p class="text-gray-600 mb-4">You've successfully logged in to the Intern Portal.</p>
+                    <div class="mt-5">
+                        <button id="closeModal" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Go to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
+            if (username && password) {
+                // Show success modal
+                document.getElementById('successModal').classList```
